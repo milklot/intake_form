@@ -1,34 +1,81 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import React, { useState, useEffect, FormEvent } from "react";
+import "./App.css";
+import * as yup from "yup";
 
-function App() {
-  const [count, setCount] = useState(0)
+import formSchema from "./validation/formSchema";
+import { ContactFooter } from "./components/ContactFooter";
+import { ContactHeader } from "./components/ContactHeader";
+import { ContactForm } from "./components/ContactForm";
+
+const initialState: {
+  name: string;
+  email: string;
+  birthDate: string;
+  emailConsent: boolean;
+} = {
+  name: "",
+  email: "",
+  birthDate: "",
+  emailConsent: false,
+};
+
+const initialFormErrors: {
+  name: string;
+  email: string;
+  birthDate: string;
+  emailConsent: string;
+} = {
+  name: "",
+  email: "",
+  birthDate: "",
+  emailConsent: "",
+};
+
+const App = () => {
+  const [formValues, setFormValues] = useState(initialState);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  const inputChange = (name: string, value: any) => {
+    yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then(() => {
+        setFormErrors({
+          ...formErrors,
+          [name]: "",
+        });
+      })
+      .catch((error: any) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: error.message,
+        });
+      });
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
+  const formSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log(formValues);
+  };
+
+  useEffect(() => {
+    formSchema.isValid(formValues).then((valid) => {
+      setIsDisabled(!valid);
+    });
+  }, [formValues]);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <>
+      <ContactHeader />
+      <ContactForm />
+      <ContactFooter />
+    </>
+  );
+};
 
-export default App
+export default App;

@@ -65,13 +65,13 @@ export const ContactForm = () => {
   };
 
   useEffect(() => {
-    console.log(formSchema.isValidSync(contactPerson)), [];
-    // formSchema.isValid(contactPerson).then(
-    //   (isValid: boolean) => {
-    //     setIsDisabled(!isValid);
-    //   },
-    //   [contactPerson]
-    // );
+    // console.log(formSchema.isValidSync(contactPerson)), [];
+    formSchema.isValid(contactPerson).then(
+      (isValid: boolean) => {
+        setIsDisabled(!isValid);
+      },
+      [contactPerson]
+    );
   });
 
   return (

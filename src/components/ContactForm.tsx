@@ -1,14 +1,9 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import { Button, Form, FormGroup, Label, Input, Alert } from "reactstrap";
 import * as yup from "yup";
 import formSchema from "../validation/formSchema";
 
-type initialStateType = {
-  name: string;
-  email: string;
-  birthDate: string;
-  emailConsent: boolean;
-};
+type initialStateType = yup.InferType<typeof formSchema>;
 
 const initialState: initialStateType = {
   name: "",
@@ -32,7 +27,7 @@ const initialFormErrors: {
 export const ContactForm = () => {
   const [contactPerson, setContactPerson] = useState(initialState);
   const [contactFormErrors, setContactFormErrors] = useState(initialFormErrors);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<boolean>(false);
   const [postErrorMessage, setPostErrorMessage] = useState<boolean>(false);
 
@@ -70,10 +65,13 @@ export const ContactForm = () => {
   };
 
   useEffect(() => {
-    console.log(contactPerson);
-    formSchema
-      .isValid(contactPerson)
-      .then((isValid: boolean) => setIsDisabled(!isValid), [contactPerson]);
+    console.log(formSchema.isValidSync(contactPerson)), [];
+    // formSchema.isValid(contactPerson).then(
+    //   (isValid: boolean) => {
+    //     setIsDisabled(!isValid);
+    //   },
+    //   [contactPerson]
+    // );
   });
 
   return (
@@ -123,7 +121,6 @@ export const ContactForm = () => {
               id="emailConsent"
               onChange={changeHandler}
               checked={contactPerson.emailConsent}
-              onClick={(event) => console.log(event)}
               required
             />
             I agree to be contacted via email.
@@ -132,7 +129,7 @@ export const ContactForm = () => {
         <Button
           type="reset"
           className="contact-form-btn"
-          onClick={(event) => console.log(event)}
+          onClick={() => setContactPerson(initialState)}
         >
           Clear
         </Button>

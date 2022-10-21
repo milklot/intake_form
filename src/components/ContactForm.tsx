@@ -3,12 +3,14 @@ import { Button, Form, FormGroup, Label, Input, Alert } from "reactstrap";
 import * as yup from "yup";
 import formSchema from "../validation/formSchema";
 
-const initialState: {
+type initialStateType = {
   name: string;
   email: string;
   birthDate: string;
   emailConsent: boolean;
-} = {
+};
+
+const initialState: initialStateType = {
   name: "",
   email: "",
   birthDate: "",
@@ -30,9 +32,9 @@ const initialFormErrors: {
 export const ContactForm = () => {
   const [contactPerson, setContactPerson] = useState(initialState);
   const [contactFormErrors, setContactFormErrors] = useState(initialFormErrors);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [successMessage, setSuccessMessage] = useState(false);
-  const [postErrorMessage, setPostErrorMessage] = useState(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [successMessage, setSuccessMessage] = useState<boolean>(false);
+  const [postErrorMessage, setPostErrorMessage] = useState<boolean>(false);
 
   const inputChange = (name: string, value: any) => {
     yup
@@ -64,14 +66,15 @@ export const ContactForm = () => {
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("form has been submitted");
+    console.log(contactPerson, `form has been submitted`);
   };
 
-  //   useEffect(() => {
-  //     formSchema
-  //       .isValid(contactPerson)
-  //       .then((isValid: boolean) => setIsDisabled(!isValid), [contactPerson]);
-  //   }); need to check this useEffect
+  useEffect(() => {
+    console.log(contactPerson);
+    formSchema
+      .isValid(contactPerson)
+      .then((isValid: boolean) => setIsDisabled(!isValid), [contactPerson]);
+  });
 
   return (
     <>

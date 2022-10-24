@@ -2,6 +2,7 @@ import React, { ChangeEvent, useState, useEffect } from "react";
 import { Button, Form, FormGroup, Label, Input, Alert } from "reactstrap";
 import * as yup from "yup";
 import formSchema from "../validation/formSchema";
+import axios from "axios";
 
 type initialStateType = yup.InferType<typeof formSchema>;
 
@@ -61,7 +62,20 @@ export const ContactForm = () => {
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(contactPerson, `form has been submitted`);
+    setSuccessMessage(!successMessage);
+    axios
+      .post(
+        "https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users",
+        contactPerson
+      )
+      .then((res) => {
+        //console.log(res.data)
+        setContactPerson(initialState);
+      })
+      .catch((err) => {
+        setPostErrorMessage(!postErrorMessage);
+        // console.log(err);
+      });
   };
 
   useEffect(() => {
